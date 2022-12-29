@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Habr Parser</title>
+</head>
+<body>
+<script>
+function printTasks() {
+  fetch("file.json").then(
+    res => res.json(),
+    error => alert(error)
+  ).then(function(res) {
+    if (res) {
+      let tasks = res[0];
+      if (document.querySelector("div")) {
+        last_task = document.querySelector("div").innerHTML.split(" | ")[0];
+        task = tasks[0];
+        if (last_task != task.title) {
+          let notification = new Notification(task.title, {body: `Отклики: ${task.responses} | Просмотры: ${task.views}\nЦeнa: ${task.price} | ${task.time}`});
+          notification.onclick = function () {
+            window.open(task.link, '_blank');
+          }
+        }
+      }
+      document.body.innerHTML = "";
+      for (let task of tasks) {
+        let div = document.createElement("div");
+        div.innerHTML = `${task.title} | Отклики: ${task.responses} | Просмотры: ${task.views} | Время: ${task.time} | Цена: ${task.price} <a href="${task.link}">${task.link}</a>`;
+        document.body.append(div);
+      }
+    }
+  });
+}
+setInterval(printTasks, 2000);
+</script>
+</body>
+</html>
